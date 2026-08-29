@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Open Chrome Extensions Page (Windows)",
+      "type": "shell",
+      "command": "start chrome chrome://extensions",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open Edge Extensions Page (Windows)",
+      "type": "shell",
+      "command": "start msedge edge://extensions",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+/* Floating button styles */
+#easy-nzb-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  background: #0ea5e9;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+}
+
+#easy-nzb-fab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.28);
+}
+
+#easy-nzb-fab:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.22);
+}
+
+#easy-nzb-fab[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Optional tooltip label */
+#easy-nzb-fab::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 68px;
+  bottom: 50%;
+  transform: translateY(50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+#easy-nzb-fab:hover::after {
+  opacity: 1;
+}
