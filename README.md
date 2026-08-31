@@ -22,3 +22,6 @@ Right-click the extension icon and choose **Options** (or find it under `chrome:
 
 ## Updating
 After making local edits, click **Reload** on the extension card in `chrome://extensions`, then refresh the target site.
+
+## License
+Licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) — free to use, modify, and share for noncommercial purposes only.
