@@ -1,26 +1,22 @@
-# Easy NZB Button (VS Code Workspace)
+# Easy NZB Button
 
-This folder contains a ready-to-open **VS Code workspace** for developing and testing your Chrome/Edge extension.
+A Chrome/Edge browser extension for `members.easynews.com` that adds persistent, floating **NZB**, **ZIP**, and **Uncheck All** buttons in the bottom-right corner of the page. Each button mirrors the site's own action, so you don't have to scroll back up to find it.
 
-## Open in VS Code
-1. Install **Visual Studio Code**.
-2. Double-click `EasyNZBButton.code-workspace` (or open it from VS Code: File → Open Workspace).
-3. Edit `manifest.json`, `content.js`, and `content.css` as needed.
+![Easy NZB Button buttons](screenshot.png)
 
-## Test in Chrome/Edge
-1. Go to `chrome://extensions` (or `edge://extensions` in Edge).
-2. Turn on **Developer mode**.
-3. Click **Load unpacked** and select the `EasyNZBButton` folder (the same folder that contains `manifest.json`).
-4. After edits, click **Reload** on the extension card, then refresh your target site.
+## Features
+- Floating NZB / ZIP / Uncheck All buttons that click the site's real buttons for you
+- Buttons automatically enable/disable depending on whether the matching action is available on the page
+- Options page to toggle each button on/off, set size, spacing, colors, and stacking order
+
+## Install
+1. Download the latest release from the [Releases page](https://github.com/gblachstein/EasyNZBButton/releases) and unzip it.
+2. Go to `chrome://extensions` (or `edge://extensions` in Edge).
+3. Turn on **Developer mode**.
+4. Click **Load unpacked** and select the unzipped folder (the one containing `manifest.json`).
 
 ## Configure
-- Replace `https://example.com/*` in **both** `matches` and `host_permissions` in `manifest.json` with your real site(s).
-- If the default selector doesn't catch the NZB button, let me know the site's CSS selector or HTML snippet and I'll update `content.js` for you.
+Right-click the extension icon and choose **Options** (or find it under `chrome://extensions` → Details → Extension options) to enable/disable individual buttons, adjust size/spacing/colors, and reorder them.
 
-## Optional: Recommended VS Code extensions
-- ESLint
-- Prettier
-- JSON Tools
-- Path Intellisense
-
-Enjoy!
+## Updating
+After making local edits, click **Reload** on the extension card in `chrome://extensions`, then refresh the target site.

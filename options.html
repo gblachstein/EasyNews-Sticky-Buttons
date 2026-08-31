@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Easy NZB Button Settings</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 18px;
+      max-width: 560px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px 0; }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .row:last-child { border-bottom: none; }
+    .label { font-weight: 600; }
+    .sub { color: #555; font-size: 12px; margin-top: 2px; }
+    input[type="number"], select {
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      min-width: 140px;
+    }
+    input[type="color"] {
+      width: 44px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .hint { color: #555; font-size: 12px; margin-top: 10px; line-height: 1.4; }
+    .status { margin-top: 10px; font-size: 12px; color: #0a7; }
+    button {
+      margin-top: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #f7f7f7; }
+  </style>
+</head>
+<body>
+  <h1>Easy NZB Button  Settings</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <div class="label">NZB Button</div>
+      </div>
+      <input type="checkbox" id="enableNZB" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">ZIP Button</div>
+      </div>
+      <input type="checkbox" id="enableZIP" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Uncheck All Button</div>
+      </div>
+      <input type="checkbox" id="enableUncheck" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Button Size (px)</div>
+        <div class="sub">Circle diameter.  Default 56.</div>
+      </div>
+      <input type="number" id="sizePx" min="36" max="96" step="1" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Button Spacing (px)</div>
+        <div class="sub">Gap between circles.  Default 14.</div>
+      </div>
+      <input type="number" id="spacingPx" min="0" max="80" step="1" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Button Background Color</div>
+        <div class="sub">Circle fill color.</div>
+      </div>
+      <input type="color" id="bgColor" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Button Text Color</div>
+        <div class="sub">Text color.</div>
+      </div>
+      <input type="color" id="fgColor" />
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Bottom Button</div>
+        <div class="sub">Closest to bottom-right corner.</div>
+      </div>
+      <select id="orderBottom">
+        <option value="nzb">NZB</option>
+        <option value="zip">ZIP</option>
+        <option value="uncheck">Uncheck All</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Middle Button</div>
+      </div>
+      <select id="orderMiddle">
+        <option value="nzb">NZB</option>
+        <option value="zip">ZIP</option>
+        <option value="uncheck">Uncheck All</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="label">Top Button</div>
+      </div>
+      <select id="orderTop">
+        <option value="nzb">NZB</option>
+        <option value="zip">ZIP</option>
+        <option value="uncheck">Uncheck All</option>
+      </select>
+    </div>
+
+    <button id="reset">Reset to Defaults</button>
+
+    <div class="hint">
+      Changes apply immediately.  If a page is already open, changes should appear within about a second.
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

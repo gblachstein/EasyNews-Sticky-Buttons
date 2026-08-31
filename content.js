@@ -1,106 +1,175 @@
 (() => {
-  // Exact selector for the NZB input button
-  const NZB_BUTTON_SELECTORS = [
-    'input[type="submit"][name="autoNZB"][value="NZB"]'
-  ];
+  const SELECTORS = {
+    nzb: 'input[type="submit"][name="autoNZB"][value="NZB"]',
+    zip: 'input[type="submit"][value="ZIP"]',
+    uncheck: 'input[type="button"][name="off"][value="Uncheck All"]'
+  };
 
-  const FAB_ID = 'easy-nzb-fab';
-  let lastFoundButton = null;
+  const DEFAULT_SETTINGS = {
+    enableNZB: true,
+    enableZIP: true,
+    enableUncheck: true,
 
-  function createFab() {
-    if (document.getElementById(FAB_ID)) return;
+    sizePx: 56,
+    spacingPx: 14,
+
+    bgColor: '#0ea5e9',
+    fgColor: '#ffffff',
+
+    order: ['nzb', 'zip', 'uncheck']
+  };
+
+  const BUTTONS = {
+    nzb: { id: 'easy-fab-nzb', label: 'NZB', selector: SELECTORS.nzb, key: 'enableNZB' },
+    zip: { id: 'easy-fab-zip', label: 'ZIP', selector: SELECTORS.zip, key: 'enableZIP' },
+    uncheck: { id: 'easy-fab-uncheck', label: 'Uncheck All', selector: SELECTORS.uncheck, key: 'enableUncheck' }
+  };
+
+  const BASE_BOTTOM = 20;
+  let settings = DEFAULT_SETTINGS;
+  let pollTimer = null;
+
+  function clamp(n, min, max) {
+    n = Number(n);
+    if (isNaN(n)) return min;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function loadSettings(cb) {
+    chrome.storage.local.get(DEFAULT_SETTINGS, function (items) {
+      cb({
+        enableNZB: !!items.enableNZB,
+        enableZIP: !!items.enableZIP,
+        enableUncheck: !!items.enableUncheck,
+        sizePx: clamp(items.sizePx, 36, 96),
+        spacingPx: clamp(items.spacingPx, 0, 80),
+        bgColor: items.bgColor || DEFAULT_SETTINGS.bgColor,
+        fgColor: items.fgColor || DEFAULT_SETTINGS.fgColor,
+        order: Array.isArray(items.order) ? items.order : DEFAULT_SETTINGS.order
+      });
+    });
+  }
+
+  function applyCssVars() {
+    const fontPx = clamp(Math.round(settings.sizePx * (14 / 56)), 10, 18);
+
+    document.documentElement.style.setProperty('--easy-fab-size', settings.sizePx + 'px');
+    document.documentElement.style.setProperty('--easy-fab-font', fontPx + 'px');
+    document.documentElement.style.setProperty('--easy-fab-bg', settings.bgColor);
+    document.documentElement.style.setProperty('--easy-fab-fg', settings.fgColor);
+  }
+
+  function isVisible(el) {
+    const r = el.getBoundingClientRect();
+    const s = window.getComputedStyle(el);
+    return s && s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0;
+  }
+
+  function findNative(selector) {
+    const el = document.querySelector(selector);
+    return el && isVisible(el) ? el : null;
+  }
+
+  function clickNative(selector) {
+    const el = findNative(selector);
+    if (!el) return;
+    try {
+      el.click();
+    } catch (e) {
+      const evt = document.createEvent('MouseEvents');
+      evt.initMouseEvent('click', true, true, window, 1);
+      el.dispatchEvent(evt);
+    }
+  }
+
+  function createFab(def) {
+    if (document.getElementById(def.id)) return;
 
     const btn = document.createElement('button');
-    btn.id = FAB_ID;
+    btn.id = def.id;
     btn.type = 'button';
-    btn.textContent = 'NZB';
-    btn.setAttribute('data-label', 'Click NZB');
-    btn.addEventListener('click', onFabClick);
+    btn.className = 'easy-nzb-fab';
+    btn.textContent = def.label;
+
+    btn.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      clickNative(def.selector);
+    };
 
     document.documentElement.appendChild(btn);
   }
 
-  function setFabEnabled(enabled) {
-    const fab = document.getElementById(FAB_ID);
-    if (!fab) return;
-    if (enabled) {
-      fab.removeAttribute('disabled');
-      fab.title = 'NZB is available';
-    } else {
-      fab.setAttribute('disabled', 'true');
-      fab.title = 'NZB button not found on this page';
+  function removeFab(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function positionButtons() {
+    const enabled = [];
+    for (let i = 0; i < settings.order.length; i++) {
+      const key = settings.order[i];
+      const def = BUTTONS[key];
+      if (def && settings[def.key]) enabled.push(def);
+    }
+
+    for (let i = 0; i < enabled.length; i++) {
+      const el = document.getElementById(enabled[i].id);
+      if (!el) continue;
+      el.style.bottom = (BASE_BOTTOM + i * (settings.sizePx + settings.spacingPx)) + 'px';
     }
   }
 
-  function findNzbButton() {
-    for (const sel of NZB_BUTTON_SELECTORS) {
-      const el = document.querySelector(sel);
-      if (el && isVisible(el)) {
-        return el;
-      }
+  function applyButtons() {
+    applyCssVars();
+
+    for (const k in BUTTONS) {
+      const def = BUTTONS[k];
+      if (settings[def.key]) createFab(def);
+      else removeFab(def.id);
     }
-    return null;
+
+    positionButtons();
   }
 
-  function isVisible(el) {
-    const rect = el.getBoundingClientRect();
-    const style = window.getComputedStyle(el);
-    return (
-      style &&
-      style.visibility !== 'hidden' &&
-      style.display !== 'none' &&
-      rect.width > 0 &&
-      rect.height > 0
-    );
-  }
+  function refreshState() {
+    for (const k in BUTTONS) {
+      const def = BUTTONS[k];
+      if (!settings[def.key]) continue;
 
-  function onFabClick(ev) {
-    ev.preventDefault();
-    ev.stopPropagation();
+      const el = document.getElementById(def.id);
+      if (!el) continue;
 
-    const target = findNzbButton();
-    if (target) {
-      try {
-        target.click(); // should trigger the same as clicking the submit button
-      } catch (_) {
-        // fallback: dispatch a synthetic click
-        const evt = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-        target.dispatchEvent(evt);
-      }
-    } else {
-      const fab = document.getElementById(FAB_ID);
-      if (fab) {
-        fab.animate(
-          [{ transform: 'scale(1)' }, { transform: 'scale(0.95)' }, { transform: 'scale(1)' }],
-          { duration: 150 }
-        );
-      }
+      if (findNative(def.selector)) el.removeAttribute('disabled');
+      else el.setAttribute('disabled', 'true');
     }
   }
 
-  function refreshBinding() {
-    lastFoundButton = findNzbButton();
-    setFabEnabled(!!lastFoundButton);
+  function settingsChanged(a, b) {
+    return JSON.stringify(a) !== JSON.stringify(b);
   }
 
-  const obs = new MutationObserver(refreshBinding);
+  function pollSettings() {
+    loadSettings(function (latest) {
+      if (settingsChanged(settings, latest)) {
+        settings = latest;
+        applyButtons();
+        refreshState();
+      }
+    });
+  }
 
   function init() {
-    createFab();
-    refreshBinding();
-
-    obs.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
+    loadSettings(function (s) {
+      settings = s;
+      applyButtons();
+      refreshState();
+      pollTimer = setInterval(pollSettings, 750);
     });
-
-    document.addEventListener('visibilitychange', refreshBinding, { passive: true });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
+    document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
