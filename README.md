@@ -2,6 +2,8 @@
 
 A Chrome/Edge browser extension for `members.easynews.com` that adds persistent, floating **NZB**, **ZIP**, and **Uncheck All** buttons in the bottom-right corner of the page. Each button mirrors the site's own action, so you don't have to scroll back up to find it.
 
+> 🤖 **Vibe coded.** This extension was built collaboratively with an AI coding assistant (Claude). It works, but review the source yourself before trusting it with anything sensitive.
+
 ![Easy NZB Button buttons](screenshot.png)
 
 ## Features
